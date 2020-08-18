@@ -22,8 +22,9 @@ a termination criteria is met or the target solution is reached.<p>
 
 
 ## Usage
-Use config.ini to change the parameter values.
+Use config.ini to change the parameter values.  
+
 If no string is passed as argument, the string specified in the config.ini file will be assumed as the target string.
 
 ```python
-python stringEvoltuion.py --string "target string"
+python stringEvolution.py --string "target string"
