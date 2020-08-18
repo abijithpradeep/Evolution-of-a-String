@@ -206,13 +206,13 @@ class Evolution:
 
 
     def display_msg(self, msg, parent1):
-        print("#"*100 + "\n\n")
-        print(f"    \
-                    Evolution {msg} ! \n \
-                    Evolved from \{self.initial_chromosome.display()} \
-                    to {parent1.display()}\n"
-                )
-        print("#"*100)
+        print("\n\n" + "#" * 100 + "\n\n")
+        print(
+                f"Evolution {msg} ! \t" +\
+                f"Evolved from \t {self.initial_chromosome.display()} \t" +\
+                f"to \t {parent1.display()}\n"
+             )
+        print("#" * 100)
 
 
     #Driving function
@@ -221,17 +221,17 @@ class Evolution:
         self.initial_chromosome = self.generation[0].population[0]
 
         for generation in range(self.MAX_GENERATION):
-            print(f"Generation : {generation + 1}\n")
+            print(f"\nGeneration : {generation + 1}\n")
             
             new_generation = list()
 
             for pop_index, population in enumerate(self.generation):
                 new_population = list()
                 parent1, parent2 = population.selection()
-                print(f"\
-                          Population : {pop_index + 1} \
-                          Best String : {parent1.display()} \
-                          Fitness : {population.calculate_fitness(parent1)}"
+                print(    
+                          f"\tPopulation : {pop_index + 1} \t\t" +\
+                          f"Best String : {parent1.display()} \t" +\
+                          f"Fitness : {population.calculate_fitness(parent1)}"
                 )
 
                 #Checking if the target string is reached.
