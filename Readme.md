@@ -2,6 +2,13 @@
 
 The program begins with a random string and simulates its evolution to reach the specified target string using Genetic Algorithm.
 
+
+## Demo
+![](demo.gif)
+
+Evolved from a random string `b*^WuFbPRI@_Kv\)V.Y-n[cyE` to the target string `May the force be with you` in 67 Generation
+
+## Genetic Algorithm
 <p>Genetic algorithm is a search heuristic that is inspired by Charles Darwin’s theory of natural evolution. 
 This algorithm reflects the process of natural selection where the fittest individuals are selected for reproduction
 in order to produce offspring for the next generation.
