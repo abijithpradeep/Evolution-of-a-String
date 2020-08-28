@@ -2,7 +2,6 @@ import argparse
 import configparser
 import random
 
-
 """
 
 Usage : python stringEvolution.py --string "Target String"
@@ -12,9 +11,7 @@ string specified in the config.ini file as the target string.
 
 Use the config.ini file to changes the parameter values.
 
-"""
 
-"""
 
 Genetic Algorithm : Genetic algorithm is a search heuristic that is inspired by
                     Charles Darwin’s theory of natural evolution. 
@@ -55,12 +52,13 @@ class Gene:
         # numbers and alphabets (lowercase and uppercase)
         return chr(int(random.randint(32, 122)))
 
-    
+
     def display(self):
         return self.gene
 
 
-#A chromosome is a collection of gene objects (As in a string is a collection of characters)
+
+#A chromosome is a collection of gene objects (As a string is a collection of characters)
 class Chromosome:
     #Length of the target string
     GENE_COUNT = 0
@@ -69,8 +67,8 @@ class Chromosome:
         if individual is None:
             self.chromosome = self.random_chromosome()
         else:
-            self.chromosome = individual
-        
+            self.chromosome = individual  
+
 
     def random_chromosome(self):
         chromosome = [Gene() for _ in range(Chromosome.GENE_COUNT)]
@@ -79,6 +77,7 @@ class Chromosome:
 
     def display(self):
         return ''.join([gene.display() for gene in self.chromosome])
+
 
 
 #A population is a collection of Chromosome objects
@@ -102,7 +101,6 @@ class Population:
         #Fitness score is calculated based on how much each character 
         # in the offspring differs from the Target string.
         fitness_score = 0
-
         for index, gene in enumerate(individual.chromosome):
             fitness_score += abs(ord(gene.display()) - ord(Population.TARGET_STRING[index]))
         fitness_score = -fitness_score
@@ -110,6 +108,7 @@ class Population:
         return fitness_score
     
     
+
     #Selecting two fittest chromosomes (Parents) for cross-over
     def selection(self):
         sorted_population = sorted(
@@ -118,8 +117,8 @@ class Population:
                                     reverse = True
                                   )
         return sorted_population[:2]
-
     
+
     def display(self):
         return '\t'.join([chromosome.display() for chromosome in self.population])
 
@@ -135,24 +134,29 @@ class Evolution:
         #Reading parameters from the config file
         config = configparser.ConfigParser()
         config.read("config.ini")
+        try:
+            #Number of populations in a generation
+            self.POPULATION_COUNT = int(config["PARAMETERS"]["POPULATION COUNT"])
+            #Maximum number of generations to evolve. It used as a terminal condition to
+            # stop the evolution, in case the target string is not being reached.
+            self.MAX_GENERATION = int(config["PARAMETERS"]["MAX GENERATION"])
 
-        #Number of populations in a generation
-        self.POPULATION_COUNT = int(config["PARAMETERS"]["POPULATION COUNT"])
-        #Maximum number of generations to evolve. It used as a terminal condition to
-        # stop the evolution, in case the target string is not being reached.
-        self.MAX_GENERATION = int(config["PARAMETERS"]["MAX GENERATION"])
+            #To check if any string is passed as argument while calling the program. 
+            # If so, the passed string is considered as Target string
+            if string is None:
+                self.STRING = config["PARAMETERS"]["TARGET STRING"]
+            else:
+                self.STRING = string
 
-        #To check if any string is passed as argument while calling the program. 
-        # If so, the passed string is considered as Target string
-        if string is None:
-            self.STRING = config["PARAMETERS"]["TARGET STRING"]
-        else:
-            self.STRING = string
-
-        Chromosome.GENE_COUNT = len(self.STRING)
-        Population.CHROMOSOME_COUNT = int(config["PARAMETERS"]["CHROMOSOME COUNT"])
+            Population.CHROMOSOME_COUNT = int(config["PARAMETERS"]["CHROMOSOME COUNT"])
+        except:
+            print("Oups! Seems like the config.ini file is either missing or corrupted. \n" +
+                  "Please make sure the config.ini file has a 'PARAMETER' section and it contains the following keys -\n" +
+                  "POPULATION COUNT, MAX GENERATION, TARGET STRING and CHROMOSOME COUNT with proper values")
+            exit(0)
         Population.TARGET_STRING = self.STRING
-
+        Chromosome.GENE_COUNT = len(self.STRING)
+            
 
     def create_initial_generation(self):
         self.generation = [Population() for _ in range(self.POPULATION_COUNT)]
@@ -195,6 +199,7 @@ class Evolution:
 
         return Chromosome(offspring)
 
+
     #Mate with a different cross over technique.
     def mate2(self, parent1, parent2):
         cross_over_point = random.randint(0, len(parent1.chromosome) - 1)
@@ -219,19 +224,17 @@ class Evolution:
     def evolve(self):
         self.create_initial_generation()
         self.initial_chromosome = self.generation[0].population[0]
-
+        
         for generation in range(self.MAX_GENERATION):
             print(f"\nGeneration : {generation + 1}\n")
-            
             new_generation = list()
-
             for pop_index, population in enumerate(self.generation):
                 new_population = list()
                 parent1, parent2 = population.selection()
                 print(    
-                          f"\tPopulation : {pop_index + 1} \t\t" +\
-                          f"Best String : {parent1.display()} \t" +\
-                          f"Fitness : {population.calculate_fitness(parent1)}"
+                        f"\tPopulation : {pop_index + 1} \t\t" +\
+                        f"Best String : {parent1.display()} \t" +\
+                        f"Fitness : {population.calculate_fitness(parent1)}"
                 )
 
                 #Checking if the target string is reached.
@@ -242,11 +245,9 @@ class Evolution:
                 for _ in range(population.CHROMOSOME_COUNT):
                     #Generating new population by mating the best chromosomes (parents)
                     new_population.append(self.mate(parent1, parent2))
-
-                new_generation.append(Population(new_population))
                 
+                new_generation.append(Population(new_population))
             self.generation = new_generation
-
         self.display_msg('Failed', parent1)
 
 
